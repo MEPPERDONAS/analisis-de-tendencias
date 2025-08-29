@@ -1,20 +1,16 @@
-// Espera a que el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', function() {
+function initializeGraphLogic() {
     const yearSelector = document.getElementById('yearSelector');
     const graphContainer = document.getElementById('graphContainer');
-    const associatedWordsDisplay = document.getElementById('associatedWordsDisplay'); 
-
+    const associatedWordsDisplay = document.getElementById('associatedWordsDisplay');
     const loadedIframes = {};
 
     function loadGraph() {
-        // --- MOVER LA DEFINICIÓN DE selectedYear y graphUrl AQUÍ ---
         const selectedYear = yearSelector.value;
-        const graphUrl = yearSelector.options[yearSelector.selectedIndex] ? yearSelector.options[yearSelector.selectedIndex].dataset.graph : null; // Añadir chequeo
+        const graphUrl = yearSelector.options[yearSelector.selectedIndex] ? yearSelector.options[yearSelector.selectedIndex].dataset.graph : null;
 
-        // Limpia el panel de palabras asociadas cada vez que se carga un nuevo grafo
         associatedWordsDisplay.innerHTML = '<p>Haz clic en un nodo para ver sus palabras vecinas.</p>';
 
-        if (graphUrl) { // Ahora graphUrl está definido aquí
+        if (graphUrl) {
             if (loadedIframes[selectedYear]) {
                 graphContainer.innerHTML = '';
                 graphContainer.appendChild(loadedIframes[selectedYear]);
@@ -31,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             } else {
                 const iframe = document.createElement('iframe');
-                iframe.src = graphUrl; // graphUrl ya está definido
+                iframe.src = graphUrl;
                 iframe.style.width = '100%';
                 iframe.style.height = '700px';
                 iframe.style.border = 'none';
@@ -68,9 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (params.nodes.length > 0) {
                 const nodeId = params.nodes[0];
                 const nodeData = networkInstance.body.data.nodes.get(nodeId); 
-                
                 const words = nodeData.associated_words; 
-                
                 console.log(`Node selected: ${nodeId}, Associated words: ${words}`);
 
                 if (words) {
@@ -100,32 +94,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    if (yearSelector) {
+        yearSelector.addEventListener('change', loadGraph);
 
-    // Añade el listener para el cambio en el selector de año
-    yearSelector.addEventListener('change', loadGraph);
-
-    // Carga el grafo inicial al cargar la página
-    // Aseguramos que selectedYear y graphUrl se definan cuando se llama a loadGraph
-    if (yearSelector.value) {
-        loadGraph();
-    } else if (yearSelector.options.length > 1) {
-        yearSelector.value = yearSelector.options[1].value;
-        loadGraph();
+        if (yearSelector.value) {
+            loadGraph();
+        } else if (yearSelector.options.length > 1) {
+            yearSelector.value = yearSelector.options[1].value;
+            loadGraph();
+        }
     }
-        function loadContent(url) {
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar el contenido: ' + response.statusText);
-                }
-                return response.text();
-            })
-            .then(data => {
-                document.getElementById('content-container').innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('content-container').innerHTML = '<p>Lo sentimos, no se pudo cargar el contenido.</p>';
-            });
-    }
-});
+}

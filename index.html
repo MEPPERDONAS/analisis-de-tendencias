@@ -7,17 +7,40 @@
     <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
-
     <header>
         <h1>Análisis de Tendencias de la Administración</h1>
     </header>
-
     <div class="button-container">
-        <a href="index.html" class="button home-button">Home</a>
-        <a href="templates/inter-c.html" class="button">Internacional</a>
-        <a href="templates/nacional.html" class="button">Nacional</a>
-        <a href="templates/regional.html" class="button">Regional</a>
+        <a href="#" onclick="loadContent('templates/inter-c.html')" class="button">Internacional</a>
+        <a href="#" onclick="loadContent('templates/nacional.html')" class="button">Nacional</a>
+        <a href="#" onclick="loadContent('templates/regional.html')" class="button">Regional</a>
     </div>
-
+    <div id="content-container">
+        </div>
+    <script src="static/graph_selector.js"></script>
+    <script>
+        function loadContent(url) {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al cargar el contenido: ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('content-container').innerHTML = data;
+                    // Call the function from the external JS file
+                    initializeGraphLogic(); 
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('content-container').innerHTML = '<p>Lo sentimos, no se pudo cargar el contenido.</p>';
+                });
+        }
+        // Load default content on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadContent('templates/inter-c.html');
+        });
+    </script>
 </body>
 </html>
